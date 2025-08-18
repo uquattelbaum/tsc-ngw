@@ -1,0 +1,10 @@
+{
+  "name": "@tsc-ngw/db",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/schema.ts",
+  "scripts": {
+    "generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "push": "drizzle-kit push --config ./drizzle.config.ts"
+  }
+}

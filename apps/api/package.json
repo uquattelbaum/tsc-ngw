@@ -1,0 +1,7 @@
+{
+  "name": "@tsc-ngw/api",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev -c wrangler.toml"
+  }
+}

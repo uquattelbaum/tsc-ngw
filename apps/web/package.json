@@ -1,0 +1,6 @@
+{
+  "name": "@tsc-ngw/web",
+  "scripts": {
+    "dev": "vite"
+  }
+}
