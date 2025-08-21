@@ -1,47 +1,32 @@
-import type { Mitglied } from "../types";
+import type { TabBankProps } from '@/types'
 
-interface Props {
-  mitglied: Mitglied;
-  onChange: (field: keyof Mitglied, value: string) => void;
-}
-
-export default function TabBank({ mitglied, onChange }: Props) {
+export default function TabBank({ mitglied, onChange }: TabBankProps) {
   return (
-    <div className="space-y-4">
-      <Input
-        label="Kontoinhaber"
-        value={mitglied.kontoinhaber ?? ""}
-        onChange={(v) => onChange("kontoinhaber", v)}
-      />
-      <Input
-        label="IBAN"
-        value={mitglied.iban ?? ""}
-        onChange={(v) => onChange("iban", v)}
-      />
+    <div className="grid gap-3 sm:grid-cols-3">
+      <div>
+        <label className="block text-sm mb-1">IBAN</label>
+        <input
+          className="border rounded px-3 py-2 w-full"
+          value={(mitglied as any).iban ?? ''}
+          onChange={(e) => onChange('iban' as any, e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block text-sm mb-1">Bank (Name)</label>
+        <input
+          className="border rounded px-3 py-2 w-full"
+          value={(mitglied as any).bank ?? ''}
+          onChange={(e) => onChange('bank' as any, e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block text-sm mb-1">Mandatsreferenz</label>
+        <input
+          className="border rounded px-3 py-2 w-full"
+          value={(mitglied as any).mandatsreferenz ?? ''}
+          onChange={(e) => onChange('mandatsreferenz' as any, e.target.value)}
+        />
+      </div>
     </div>
-  );
-}
-
-function Input({
-  label,
-  value,
-  onChange,
-  type = "text",
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium mb-1">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="border rounded px-3 py-2 w-full"
-      />
-    </div>
-  );
+  )
 }

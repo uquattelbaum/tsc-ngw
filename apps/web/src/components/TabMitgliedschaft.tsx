@@ -1,80 +1,81 @@
-import type { Mitglied } from "../types";
+import type { TabMitgliedschaftProps, Intervall } from '@/types'
 
-interface Props {
-  mitgliedschaft: Partial<Mitglied>;
-  onChange: (field: keyof Mitglied, value: string) => void;
-}
+const intervallOptions: { value: Intervall; label: string }[] = [
+  { value: 'monatlich', label: 'Monatlich' },
+  { value: 'vierteljährlich', label: 'Vierteljährlich' },
+  { value: 'halbjährlich', label: 'Halbjährlich' },
+  { value: 'jährlich', label: 'Jährlich' },
+]
 
-export default function TabMitgliedschaft({ mitgliedschaft, onChange }: Props) {
+export default function TabMitgliedschaft({ mitgliedId, mitgliedschaft, onChange }: TabMitgliedschaftProps) {
   return (
-    <div className="space-y-4">
-      <Input
-        label="Abteilung"
-        value={mitgliedschaft.abteilungId ?? ""}
-        onChange={(v) => onChange("abteilungId", v)}
-      />
-      <Input
-        label="Gruppe"
-        value={mitgliedschaft.gruppeId ?? ""}
-        onChange={(v) => onChange("gruppeId", v)}
-      />
-      <Input
-        label="Beitragsintervall"
-        value={mitgliedschaft.beitragsintervall ?? ""}
-        onChange={(v) => onChange("beitragsintervall", v)}
-      />
-      <Input
-        label="Beitragshöhe"
-        value={mitgliedschaft.beitragshoehe ?? ""}
-        onChange={(v) => onChange("beitragshoehe", v)}
-      />
-      <Input
-        label="Startdatum"
-        type="date"
-        value={mitgliedschaft.startdatum ?? ""}
-        onChange={(v) => onChange("startdatum", v)}
-      />
-      <Input
-        label="Enddatum"
-        type="date"
-        value={mitgliedschaft.enddatum ?? ""}
-        onChange={(v) => onChange("enddatum", v)}
-      />
-      <Input
-        label="Mandatsdatum"
-        type="date"
-        value={mitgliedschaft.mandatsdatum ?? ""}
-        onChange={(v) => onChange("mandatsdatum", v)}
-      />
-      <Input
-        label="Mandatsreferenz"
-        value={mitgliedschaft.mandatsreferenz ?? ""}
-        onChange={(v) => onChange("mandatsreferenz", v)}
-      />
-    </div>
-  );
-}
+    <div className="grid gap-3 sm:grid-cols-3">
+      <div>
+        <label className="block text-sm mb-1">Intervall</label>
+        <select
+          className="border rounded px-3 py-2 w-full"
+          value={mitgliedschaft.intervall}
+          onChange={(e) => onChange({ intervall: e.target.value as Intervall })}
+        >
+          {intervallOptions.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+      </div>
 
-function Input({
-  label,
-  value,
-  onChange,
-  type = "text",
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium mb-1">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="border rounded px-3 py-2 w-full"
-      />
+      <div>
+        <label className="block text-sm mb-1">Beitrag</label>
+        <input
+          type="number"
+          className="border rounded px-3 py-2 w-full"
+          value={mitgliedschaft.beitrag}
+          onChange={(e) => onChange({ beitrag: Number(e.target.value || 0) })}
+          min={0}
+        />
+      </div>
+
+      <div className="flex items-center gap-2 mt-6">
+        <input
+          id="mitgliedschaft-aktiv"
+          type="checkbox"
+          className="h-4 w-4"
+          checked={!!mitgliedschaft.aktiv}
+          onChange={(e) => onChange({ aktiv: e.target.checked })}
+        />
+        <label htmlFor="mitgliedschaft-aktiv" className="text-sm">aktiv</label>
+      </div>
+
+      <div className="sm:col-span-3 grid gap-3 sm:grid-cols-3">
+        <div>
+          <label className="block text-sm mb-1">Mandatsreferenz</label>
+          <input
+            className="border rounded px-3 py-2 w-full"
+            value={mitgliedschaft.mandatsreferenz ?? ''}
+            onChange={(e) => onChange({ mandatsreferenz: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="block text-sm mb-1">Bank (Name)</label>
+          <input
+            className="border rounded px-3 py-2 w-full"
+            value={mitgliedschaft.bank ?? ''}
+            onChange={(e) => onChange({ bank: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="block text-sm mb-1">IBAN</label>
+          <input
+            className="border rounded px-3 py-2 w-full"
+            value={mitgliedschaft.iban ?? ''}
+            onChange={(e) => onChange({ iban: e.target.value })}
+          />
+        </div>
+      </div>
+
+      {/* Hinweis: Das tatsächliche Speichern erfolgt in Mitglieder.tsx (TODO API) */}
+      {mitgliedId && (
+        <p className="text-xs text-gray-500 sm:col-span-3">Mitglied: {mitgliedId}</p>
+      )}
     </div>
-  );
+  )
 }

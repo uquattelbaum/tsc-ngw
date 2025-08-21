@@ -12,7 +12,7 @@ import TabKontakt from "@/components/TabKontakt";
 import TabMitgliedschaft from "@/components/TabMitgliedschaft";
 import TabBank from "@/components/TabBank";
 
-import type { Mitglied } from "@/types";
+import type { Mitglied, Mitgliedschaft } from "@/types";
 
 type TabKey = "persoenlich" | "kontakt" | "mitgliedschaft" | "bank";
 
@@ -20,8 +20,14 @@ export default function MitgliederPage() {
   const [search, setSearch] = useState("");
   const list = useMitgliederList({ search });
 
-  // gesamter Mitglieds-State
+  // Gesamter Mitglieds‑State (Stammdaten)
   const [mitglied, setMitglied] = useState<Mitglied>({} as Mitglied);
+  // Saubere Option: Mitgliedschaft separat verwalten (eigener Endpoint folgt)
+  const [mitgliedschaft, setMitgliedschaft] = useState<Mitgliedschaft>({
+    intervall: "monatlich",
+    beitrag: 0,
+    aktiv: true,
+  });
 
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -31,11 +37,13 @@ export default function MitgliederPage() {
   const remove = useRemoveMitglied();
   const update = useUpdateMitglied();
 
+  // Beim Wechsel in den Edit‑Modus Werte aus der Liste ins Formular übernehmen
   useEffect(() => {
     if (!editId) return;
     const row = (list.data ?? []).find((m) => m.id === editId);
     if (row) {
       setMitglied(row as Mitglied);
+      // TODO: Mitgliedschaft passend laden, sobald Endpoint existiert
       setShowForm(true);
       setActiveTab("persoenlich");
     }
@@ -46,6 +54,7 @@ export default function MitgliederPage() {
 
   function resetForm() {
     setMitglied({} as Mitglied);
+    setMitgliedschaft({ intervall: "monatlich", beitrag: 0, aktiv: true });
     setEditId(null);
     setActiveTab("persoenlich");
     setShowForm(false);
@@ -54,6 +63,8 @@ export default function MitgliederPage() {
   function handleSave() {
     const payload = { ...mitglied } as Partial<MitgliedRow>;
     if (!payload.vorname || !payload.nachname) return;
+
+    // TODO: Mitgliedschaft getrennt speichern (eigener Endpoint) – folgt im nächsten Schritt
 
     if (editId) {
       update.mutate({ id: editId, data: payload }, { onSuccess: () => resetForm() });
@@ -70,6 +81,7 @@ export default function MitgliederPage() {
     <div style={{ maxWidth: 960, margin: "2rem auto", padding: "0 1rem" }}>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Mitglieder</h1>
 
+      {/* Suche */}
       <div style={{ margin: "12px 0 16px" }}>
         <input
           placeholder="Suche (Vorname, Nachname, E‑Mail)…"
@@ -79,13 +91,16 @@ export default function MitgliederPage() {
         />
       </div>
 
+      {/* Aktionszeile */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0 0 12px" }}>
         <div />
         <button type="button" style={btnPrimary} onClick={() => { resetForm(); setShowForm(true); }}>Neues Mitglied</button>
       </div>
 
+      {/* Formular mit Tabs */}
       {showForm && (
         <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 16, marginBottom: 18 }}>
+          {/* Tab‑Reiter */}
           <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
             {([
               ["persoenlich", "Persönlich"],
@@ -108,11 +123,27 @@ export default function MitgliederPage() {
             ))}
           </div>
 
-          {activeTab === "persoenlich" && <TabPersoenlich mitglied={mitglied} onChange={handleChange} />}
-          {activeTab === "kontakt" && <TabKontakt mitglied={mitglied} onChange={handleChange} />}
-          {activeTab === "mitgliedschaft" && <TabMitgliedschaft mitgliedschaft={mitglied} onChange={handleChange} />}
-          {activeTab === "bank" && <TabBank mitglied={mitglied} onChange={handleChange} />}
+          {activeTab === "persoenlich" && (
+            <TabPersoenlich mitglied={mitglied} onChange={handleChange} />
+          )}
 
+          {activeTab === "kontakt" && (
+            <TabKontakt mitglied={mitglied} onChange={handleChange} />
+          )}
+
+          {activeTab === "mitgliedschaft" && (
+            <TabMitgliedschaft
+              mitgliedId={mitglied.id}
+              mitgliedschaft={mitgliedschaft}
+              onChange={(patch) => setMitgliedschaft((prev) => ({ ...prev, ...patch }))}
+            />
+          )}
+
+          {activeTab === "bank" && (
+            <TabBank mitglied={mitglied} onChange={handleChange} />
+          )}
+
+          {/* Save/Cancel */}
           <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
             <button type="button" style={btnPrimary} onClick={handleSave} disabled={isSubmitting}>
               {editId ? "Aktualisieren" : "Speichern"}
@@ -124,11 +155,13 @@ export default function MitgliederPage() {
         </div>
       )}
 
+      {/* Status‑Meldungen */}
       {list.isLoading && <p>Lade Mitglieder…</p>}
       {create.isError && <p style={errStyle}>Fehler beim Speichern.</p>}
       {update.isError && <p style={errStyle}>Fehler beim Aktualisieren.</p>}
       {remove.isError && <p style={errStyle}>Fehler beim Löschen.</p>}
 
+      {/* Liste */}
       {!list.isLoading && (
         <table width="100%" cellPadding={10} style={{ borderCollapse: "collapse" }}>
           <thead>
@@ -141,13 +174,20 @@ export default function MitgliederPage() {
           <tbody>
             {rows.map((m) => (
               <tr key={m.id} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                <td>{m.nachname}, {m.vorname}</td>
+                <td>
+                  {m.nachname}, {m.vorname}
+                </td>
                 <td>{m.email ?? "—"}</td>
                 <td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button type="button" onClick={() => setEditId(m.id)} style={btnSecondary}>Bearbeiten</button>
+                  <button type="button" onClick={() => setEditId(m.id)} style={btnSecondary}>
+                    Bearbeiten
+                  </button>
                   <button
                     type="button"
-                    onClick={() => { if (!confirm("Mitglied wirklich löschen?")) return; remove.mutate(m.id); }}
+                    onClick={() => {
+                      if (!confirm("Mitglied wirklich löschen?")) return;
+                      remove.mutate(m.id);
+                    }}
                     style={btnDanger}
                     disabled={remove.isPending}
                   >
@@ -158,7 +198,9 @@ export default function MitgliederPage() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={3} style={{ padding: 20, color: "#666" }}>Keine Mitglieder gefunden.</td>
+                <td colSpan={3} style={{ padding: 20, color: "#666" }}>
+                  Keine Mitglieder gefunden.
+                </td>
               </tr>
             )}
           </tbody>

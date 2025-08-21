@@ -1,37 +1,35 @@
-import type { Mitglied } from "../types";
+import type { TabPersoenlichProps } from '@/types'
 
-interface Props {
-  mitglied: Mitglied;
-  onChange: (field: keyof Mitglied, value: string) => void;
-}
-
-export default function TabPersoenlich({ mitglied, onChange }: Props) {
+export default function TabPersoenlich({ mitglied, onChange }: TabPersoenlichProps) {
   return (
-    <div className="space-y-4">
-      <Input label="Vorname" value={mitglied.vorname} onChange={(v) => onChange("vorname", v)} />
-      <Input label="Nachname" value={mitglied.nachname} onChange={(v) => onChange("nachname", v)} />
-      <Input label="Geburtsdatum" type="date" value={mitglied.geburtsdatum ?? ""} onChange={(v) => onChange("geburtsdatum", v)} />
-      <Input label="Geschlecht" value={mitglied.geschlecht ?? ""} onChange={(v) => onChange("geschlecht", v)} />
-      <Input label="Familienstand" value={mitglied.familienstand ?? ""} onChange={(v) => onChange("familienstand", v)} />
+    <div className="grid gap-3 sm:grid-cols-3">
+      <div>
+        <label className="block text-sm mb-1">Vorname</label>
+        <input
+          className="border rounded px-3 py-2 w-full"
+          value={mitglied.vorname ?? ''}
+          onChange={(e) => onChange('vorname', e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm mb-1">Nachname</label>
+        <input
+          className="border rounded px-3 py-2 w-full"
+          value={mitglied.nachname ?? ''}
+          onChange={(e) => onChange('nachname', e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm mb-1">E‑Mail (optional)</label>
+        <input
+          type="email"
+          className="border rounded px-3 py-2 w-full"
+          value={mitglied.email ?? ''}
+          onChange={(e) => onChange('email', e.target.value)}
+        />
+      </div>
     </div>
-  );
-}
-
-function Input({ label, value, onChange, type = "text" }: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium mb-1">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="border rounded px-3 py-2 w-full"
-      />
-    </div>
-  );
+  )
 }

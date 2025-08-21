@@ -1,9 +1,0 @@
-{
-  "name": "@tsc-ngw/web",
-  "scripts": {
-    "dev": "vite"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "^5.85.5"
-  }
-}
