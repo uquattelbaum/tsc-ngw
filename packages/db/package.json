@@ -1,10 +1,21 @@
 {
-  "name": "@tsc-ngw/db",
+  "name": "@tsc/db",
   "version": "0.0.1",
   "type": "module",
-  "main": "src/schema.ts",
-  "scripts": {
-    "generate": "drizzle-kit generate --config ./drizzle.config.ts",
-    "push": "drizzle-kit push --config ./drizzle.config.ts"
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "drizzle-orm": "^0.44.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
   }
 }

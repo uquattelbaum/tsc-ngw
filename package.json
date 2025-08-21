@@ -1,9 +1,14 @@
 {
-  "name": "tsc-ngw-root",
+  "name": "tsc-ngw",
   "private": true,
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev:api": "pnpm -C apps/api dev",
-    "dev:web": "pnpm -C apps/web dev"
+    "dev:web": "pnpm -C apps/web dev",
+    "db:push": "drizzle-kit push --config ./packages/db/drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config ./packages/db/drizzle.config.ts"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.24.0"
   }
 }
