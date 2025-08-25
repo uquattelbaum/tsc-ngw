@@ -67,7 +67,10 @@ export default function MitgliederPage() {
     // TODO: Mitgliedschaft getrennt speichern (eigener Endpoint) – folgt im nächsten Schritt
 
     if (editId) {
-      update.mutate({ id: editId, data: payload }, { onSuccess: () => resetForm() });
+      update.mutate(
+        { id: editId, data: payload },
+        { onSuccess: () => resetForm() }
+      );
     } else {
       create.mutate(payload as any, { onSuccess: () => resetForm() });
     }
@@ -79,7 +82,9 @@ export default function MitgliederPage() {
 
   return (
     <div style={{ maxWidth: 960, margin: "2rem auto", padding: "0 1rem" }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Mitglieder</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
+        Mitglieder
+      </h1>
 
       {/* Suche */}
       <div style={{ margin: "12px 0 16px" }}>
@@ -87,27 +92,64 @@ export default function MitgliederPage() {
           placeholder="Suche (Vorname, Nachname, E‑Mail)…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ width: "100%", padding: 10, border: "1px solid #ddd", borderRadius: 6 }}
+          style={{
+            width: "100%",
+            padding: 10,
+            border: "1px solid #ddd",
+            borderRadius: 6,
+          }}
         />
       </div>
 
       {/* Aktionszeile */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0 0 12px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          margin: "0 0 12px",
+        }}
+      >
         <div />
-        <button type="button" style={btnPrimary} onClick={() => { resetForm(); setShowForm(true); }}>Neues Mitglied</button>
+        <button
+          type="button"
+          style={btnPrimary}
+          onClick={() => {
+            resetForm();
+            setShowForm(true);
+          }}
+        >
+          Neues Mitglied
+        </button>
       </div>
 
       {/* Formular mit Tabs */}
       {showForm && (
-        <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 16, marginBottom: 18 }}>
+        <div
+          style={{
+            border: "1px solid #e5e7eb",
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 18,
+          }}
+        >
           {/* Tab‑Reiter */}
-          <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
-            {([
-              ["persoenlich", "Persönlich"],
-              ["kontakt", "Kontakt"],
-              ["mitgliedschaft", "Mitgliedschaft"],
-              ["bank", "Bank"],
-            ] as [TabKey, string][]).map(([key, label]) => (
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              marginBottom: 12,
+              flexWrap: "wrap",
+            }}
+          >
+            {(
+              [
+                ["persoenlich", "Persönlich"],
+                ["kontakt", "Kontakt"],
+                ["mitgliedschaft", "Mitgliedschaft"],
+                ["bank", "Bank"],
+              ] as [TabKey, string][]
+            ).map(([key, label]) => (
               <button
                 key={key}
                 type="button"
@@ -135,20 +177,37 @@ export default function MitgliederPage() {
             <TabMitgliedschaft
               mitgliedId={mitglied.id}
               mitgliedschaft={mitgliedschaft}
-              onChange={(patch) => setMitgliedschaft((prev) => ({ ...prev, ...patch }))}
+              onChange={(patch) =>
+                setMitgliedschaft((prev) => ({ ...prev, ...patch }))
+              }
             />
           )}
 
           {activeTab === "bank" && (
-            <TabBank mitglied={mitglied} onChange={handleChange} />
+            <TabBank
+              mitgliedschaft={mitgliedschaft}
+              onChange={(patch) =>
+                setMitgliedschaft((prev) => ({ ...prev, ...patch }))
+              }
+            />
           )}
 
           {/* Save/Cancel */}
           <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-            <button type="button" style={btnPrimary} onClick={handleSave} disabled={isSubmitting}>
+            <button
+              type="button"
+              style={btnPrimary}
+              onClick={handleSave}
+              disabled={isSubmitting}
+            >
               {editId ? "Aktualisieren" : "Speichern"}
             </button>
-            <button type="button" style={btnSecondary} onClick={resetForm} disabled={isSubmitting}>
+            <button
+              type="button"
+              style={btnSecondary}
+              onClick={resetForm}
+              disabled={isSubmitting}
+            >
               Abbrechen
             </button>
           </div>
@@ -163,7 +222,11 @@ export default function MitgliederPage() {
 
       {/* Liste */}
       {!list.isLoading && (
-        <table width="100%" cellPadding={10} style={{ borderCollapse: "collapse" }}>
+        <table
+          width="100%"
+          cellPadding={10}
+          style={{ borderCollapse: "collapse" }}
+        >
           <thead>
             <tr style={{ textAlign: "left", borderBottom: "1px solid #eee" }}>
               <th>Name</th>
@@ -179,7 +242,11 @@ export default function MitgliederPage() {
                 </td>
                 <td>{m.email ?? "—"}</td>
                 <td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button type="button" onClick={() => setEditId(m.id)} style={btnSecondary}>
+                  <button
+                    type="button"
+                    onClick={() => setEditId(m.id)}
+                    style={btnSecondary}
+                  >
                     Bearbeiten
                   </button>
                   <button
@@ -210,8 +277,27 @@ export default function MitgliederPage() {
   );
 }
 
-const btnBase: React.CSSProperties = { padding: "10px 14px", borderRadius: 8, border: "1px solid transparent", cursor: "pointer" };
-const btnPrimary: React.CSSProperties = { ...btnBase, background: "#2563eb", color: "white" };
-const btnSecondary: React.CSSProperties = { ...btnBase, background: "#f3f4f6", color: "#111827", borderColor: "#e5e7eb", border: "1px solid #e5e7eb" };
-const btnDanger: React.CSSProperties = { ...btnBase, background: "#ef4444", color: "white" };
+const btnBase: React.CSSProperties = {
+  padding: "10px 14px",
+  borderRadius: 8,
+  border: "1px solid transparent",
+  cursor: "pointer",
+};
+const btnPrimary: React.CSSProperties = {
+  ...btnBase,
+  background: "#2563eb",
+  color: "white",
+};
+const btnSecondary: React.CSSProperties = {
+  ...btnBase,
+  background: "#f3f4f6",
+  color: "#111827",
+  borderColor: "#e5e7eb",
+  border: "1px solid #e5e7eb",
+};
+const btnDanger: React.CSSProperties = {
+  ...btnBase,
+  background: "#ef4444",
+  color: "white",
+};
 const errStyle: React.CSSProperties = { color: "#b91c1c", marginBottom: 12 };

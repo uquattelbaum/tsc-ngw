@@ -55,14 +55,6 @@ export default function TabMitgliedschaft({ mitgliedId, mitgliedschaft, onChange
           />
         </div>
         <div>
-          <label className="block text-sm mb-1">Bank (Name)</label>
-          <input
-            className="border rounded px-3 py-2 w-full"
-            value={mitgliedschaft.bank ?? ''}
-            onChange={(e) => onChange({ bank: e.target.value })}
-          />
-        </div>
-        <div>
           <label className="block text-sm mb-1">IBAN</label>
           <input
             className="border rounded px-3 py-2 w-full"

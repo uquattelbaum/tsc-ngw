@@ -24,7 +24,7 @@ export interface Mitgliedschaft {
   beitrag: number; // in Cent oder Euro – je nachdem, wie du es speicherst
   aktiv: boolean;
   mandatsreferenz?: string | null;
-  bank?: string | null;
+  // bank?: string | null;
   iban?: string | null;
 }
 
@@ -33,8 +33,8 @@ export type OnMitgliedschaftChange = (patch: Partial<Mitgliedschaft>) => void;
 // --- Bankdaten (falls separat geführt) ---
 export interface Bankdaten {
   iban?: string | null;
-  bank?: string | null;
   mandatsreferenz?: string | null;
+  mandatsdatum?: string | null;
 }
 
 export type OnBankChange = (patch: Partial<Bankdaten>) => void;
