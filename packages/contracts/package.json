@@ -2,5 +2,8 @@
   "name": "@tsc-ngw/contracts",
   "version": "0.0.1",
   "type": "module",
-  "main": "src/index.ts"
+  "main": "src/index.ts",
+  "dependencies": {
+    "zod": "^4.1.4"
+  }
 }
